@@ -5,7 +5,7 @@
 [ -z "${RECURSOR_threads}" ]  && export RECURSOR_threads=1
 
 for k in "${!RECURSOR_@}"; do 
-    echo $(echo "$k" | sed -r 's/^RECURSOR_(.*)$/\1/; s/_/-/')"=${!k}" >> /usr/local/etc/powerdns/recursor.conf;
+    echo $(echo "$k" | sed -r 's/^RECURSOR_(.*)$/\1/; s/_/-/g')"=${!k}" >> /usr/local/etc/powerdns/recursor.conf;
 done
 
 exec "$@"
