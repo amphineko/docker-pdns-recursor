@@ -36,16 +36,13 @@ COPY --from=build /output /
 
 RUN set -ex \
     && apt-get update \
-    && apt-get install -y dns-root-data libboost-context1.67.0 libboost-filesystem1.67.0 libluajit-5.1 libprotobuf17 libsodium23 libssl1.1 python3 python3-pip tini \
-    && python3 -m pip install envtpl \
-    && apt-get remove --purge -y python3-pip \
-    && apt-get autoremove -y
+    && apt-get install -y dns-root-data libboost-context1.67.0 libboost-filesystem1.67.0 libluajit-5.1 libprotobuf17 libsodium23 libssl1.1 tini
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-COPY recursor.conf.tpl /usr/local/etc/recursor.conf.tpl
 RUN chmod +x /docker-entrypoint.sh
-RUN mkdir -p /var/run/pdns-recursor
+RUN mkdir -p /usr/local/etc/powerdns /var/run/pdns-recursor
+RUN useradd pdns-recursor
 
 ENTRYPOINT [ "/usr/bin/tini", "--", "/docker-entrypoint.sh" ]
 
-CMD [ "/usr/local/sbin/pdns_recursor", "--hint-file=/usr/share/dns/root.hints" ]
+CMD [ "/usr/local/sbin/pdns_recursor", "--config-dir=/usr/local/etc/powerdns", "--daemon=no", "--hint-file=/usr/share/dns/root.hints" ]
